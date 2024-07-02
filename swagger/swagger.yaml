@@ -1,0 +1,574 @@
+openapi: 3.0.0
+info:
+  title: OpenAPI спецификация приложения TimeTracker
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+servers:
+  - url: http://localhost:8080/
+    description: Dev server
+
+paths:
+  /user/create:
+    post:
+      summary: Метод добавления нового пользователя
+      description: Метод предназначен для сохранения в БД данных о новом пользователе.
+      operationId: createUser
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/UserFromJson"
+      responses:
+        '200':
+          "description": Подтверждение успешного сохранения
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedMessage"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /user/get/all/{from}{to}:
+    get:
+      summary: Метод получения всех пользователей с пагинацией
+      operationId: getAllUsers
+      tags:
+        - User
+      parameters:
+        - name: from
+          in: path
+          required: true
+          description: с какого пользователя
+          schema:
+            type: integer
+        - name: to
+          in: path
+          required: true
+          description: по какого пользователя
+          schema:
+            type: integer
+      responses:
+        '200':
+          "description": Список пользователей с {значение} по {значение}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserData"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /user/get/by/id/{userID}:
+    get:
+      summary: Метод получения пользователя по ID
+      operationId: getUserByID
+      tags:
+        - User
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          description: id пользователя
+          schema:
+            type: integer
+      responses:
+        '200':
+          "description": Данные пользователя с переданным ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /user/get/by/surname/{surname}:
+    get:
+      summary: Фильтрация пользователей по фамилии
+      operationId: getUserBySurname
+      tags:
+        - User
+      parameters:
+        - name: surname
+          in: path
+          required: true
+          description: Фамилия пользователей
+          schema:
+            type: string
+      responses:
+        '200':
+          "description": Пользователи, отфильтрованные по фамилии
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /user/get/by/name/{name}:
+    get:
+      summary: Фильтрация пользователей по имени
+      operationId: getUserByName
+      tags:
+        - User
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Имя пользователей
+          schema:
+            type: string
+      responses:
+        '200':
+          "description": Пользователи, отфильтрованные по имени
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /user/get/by/patronymic/{patronymic}:
+    get:
+      summary: Фильтрация пользователей по отчеству
+      operationId: getUserByPatronymic
+      tags:
+        - User
+      parameters:
+        - name: patronymic
+          in: path
+          required: true
+          description: Отчество пользователей
+          schema:
+            type: string
+      responses:
+        '200':
+          "description": Пользователи, отфильтрованные по отчеству
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /user/get/by/address/{address}:
+    get:
+      summary: Фильтрация пользователей по адресу
+      operationId: getUserByAddress
+      tags:
+        - User
+      parameters:
+        - name: address
+          in: path
+          required: true
+          description: Адрес пользователей
+          schema:
+            type: string
+      responses:
+        '200':
+          "description": Пользователи, отфильтрованные по адресу
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+
+  /user/get/statistics/{userID}:
+    get:
+      summary: Получение статистики пользователя по его ID
+      operationId: getStatistics
+      tags:
+        - User
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          description: ID пользователя
+          schema:
+            type: integer
+      responses:
+        '200':
+          "description": Статистика пользователя с переданным ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Statistics"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /user/delete/{userID}:
+    delete:
+      summary: Метод удаления пользователя по переданному ID
+      operationId: deleteUserByID
+      tags:
+        - User
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          description: ID пользователя
+          schema:
+            type: integer
+      responses:
+        '200':
+          "description": Сообщение об успешном удалении пользователя с ID {userID}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletedMessage"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /user/update:
+    put:
+      summary: Метод обновления данных пользователя
+      operationId: updateUser
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        '200':
+          "description": Подтверждение успешного обновления данных пользователя с ID {userID}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdatedMessage"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /task/start:
+    post:
+      summary: Метод создания задачи для пользователя с переданным ID
+      operationId: startTask
+      tags:
+        - Task
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/StartTask"
+      responses:
+        '200':
+          "description": Подтверждение успешного сохранения
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskMessage"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+  /task/finish/{taskID}:
+    put:
+      summary: Метод пометки задачи как выполненной по ID задачи
+      operationId: finishTask
+      tags:
+        - Task
+      parameters:
+        - name: taskID
+          in: path
+          required: true
+          description: id задачи
+          schema:
+            type: integer
+      responses:
+        '200':
+          "description": Данные выполненной задачи
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        '400':
+          "description": Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorData"
+        default:
+          description: Любая неожиданная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorServer"
+
+components:
+  schemas:
+    UserFromJson:
+      type: object
+      required:
+        - passportNumber
+      properties:
+        passportNumber:
+          type: string
+          example: 1234 567890
+    User:
+      type: object
+      required:
+        - passportNumber
+        - surname
+        - name
+        - address
+      properties:
+        userID:
+          type: integer
+          example: 2
+        passportNumber:
+          description: Серия и номер паспорта
+          type: string
+          example: 1234 567890
+        surname:
+          description: Фамилия пользователя
+          type: string
+          example: Иванов
+        name:
+          description: Имя пользователя
+          type: string
+          example: Иван
+        patronymic:
+          description: Отчество пользователя
+          type: string
+          example: Иванович
+        address:
+          description: Адрес Пользователя
+          type: string
+          example: Москва, ул. Ленина, д.5, кв.4
+    Task:
+      type: object
+      required:
+        - title
+        - userID
+      properties:
+        taskID:
+          type: integer
+          example: 2
+        isCompleted:
+          description: Флаг завершения задачи
+          type: boolean
+          example: true
+        title:
+          description: Заголовок задачи
+          type: string
+          example: Сделать time tracker
+        userID:
+          description: id пользователя, которому принадлежит задача
+          type: integer
+          example: 1
+        startAt:
+          description: Время начала выполнения задачи
+          type: string
+          example: 2024-07-02T16:44:04.121909+03:00
+        finishedAt:
+          description: Время окончания выполнения задачи
+          type: string
+          example: 2024-07-02T17:44:14.6733626+03:00
+        duration:
+          description: Время в часах, минутах и секундах, затраченное на выполнение задачи
+          type: string
+          example: 1h00m10.5514536s
+    StartTask:
+      type: object
+      required:
+        - userID
+        - title
+      properties:
+        userID:
+          description: id пользователя, которому принадлежит задача
+          type: integer
+          example: 1
+        title:
+          description: Заголовок задачи
+          type: string
+          example: Сделать time tracker
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    Tasks:
+      type: array
+      items:
+        $ref: "#/components/schemas/Task"
+    UserData:
+      properties:
+        from:
+          description: С какого пользователя (отсчет)
+          type: integer
+          example: 1
+        to:
+          description: По какого пользователя (отсчет)
+          type: integer
+          example: 10
+        users:
+          $ref: "#/components/schemas/Users"
+    Statistics:
+      properties:
+        userID:
+          description: ID пользователя
+          type: integer
+          example: 1
+        fullName:
+          description: ФИО пользователя
+          type: string
+          example: Иванов Иван Иванович
+        completedTasks:
+          description: Количество выполненных задач
+          type: integer
+          example: 1
+        tasks:
+          $ref: "#/components/schemas/Tasks"
+    CreatedMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: user id 1 was created
+    DeletedMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: user id 1 was deleted
+    UpdatedMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: user id 1 was updated
+    TaskMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: task id 1 was created
+    ErrorData:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: userID is no valid
+    ErrorServer:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: server error
